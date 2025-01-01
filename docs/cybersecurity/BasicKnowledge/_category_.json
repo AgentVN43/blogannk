@@ -1,0 +1,11 @@
+{
+    "label": "Kiến thức cơ bản",
+    "position": 2,
+    "link": {
+      "type": "generated-index",
+      "description": "Danh sách các bài viết về kiến thức cơ bản trong lĩnh vực an toàn thông tin",
+      "slug":"/cybersecurity/basic-knowledge"
+
+    }
+  }
+  

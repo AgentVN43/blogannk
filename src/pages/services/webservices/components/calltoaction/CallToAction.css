@@ -1,0 +1,59 @@
+/* Call to Action Section */
+.cta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #52c41a;
+  padding: 50px 20px;
+  color: white;
+}
+
+.cta-content {
+  text-align: center;
+  max-width: 800px;
+}
+
+.cta-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.cta-description {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  font-size: 18px;
+  padding: 15px 30px;
+  background-color: #fff;
+  color: #52c41a;
+  border-color: #52c41a;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 300px;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .cta-title {
+    font-size: 28px;
+  }
+
+  .cta-description {
+    font-size: 16px;
+  }
+
+  .cta-button {
+    width: auto;
+    padding: 12px 24px;
+  }
+}

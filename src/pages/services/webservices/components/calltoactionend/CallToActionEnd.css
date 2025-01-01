@@ -1,0 +1,35 @@
+.cta-end-container {
+    background-color: #4caf50;
+    color: white;
+    padding: 50px 20px;
+    text-align: center;
+    margin-top: 50px;
+    border-radius: 10px;
+  }
+  
+  .cta-end-content h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .cta-end-content p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  
+  .ant-btn-primary {
+    background-color: #ffffff;
+    color: #4caf50;
+    border-color: #4caf50;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    text-transform: uppercase;
+  }
+  
+  .ant-btn-primary:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+  }
+  
