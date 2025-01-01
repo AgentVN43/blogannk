@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to the 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can change the environment if needed
+
+    steps:
+    # Check out the repository
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Set up Node.js (example for React app)
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '>=18'  # Specify your Node.js version
+
+    # Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # Build the app (for React/Next.js, etc.)
+    - name: Build the app
+      run: npm run build
+
+    # Deploy to your production server
+    - name: Deploy to Production via SSH (using password)
+      env:
+        SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      run: |
+        # Install sshpass
+        sudo apt-get install -y sshpass
+        
+        # Use sshpass with SSH to connect and deploy
+        sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -T $SERVER_USER@$SERVER_HOST << 'EOF'
+          cd /www/wwwroot/annk.info/fe
+          git pull
+          npm install
+          npm run start
+        EOF
