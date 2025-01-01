@@ -35,9 +35,6 @@ jobs:
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_HOST: ${{ secrets.SERVER_HOST }}
       run: |
-        # Install sshpass
-        sudo apt-get install -y sshpass
-        
         # Use sshpass with SSH to connect and deploy
         sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -T $SERVER_USER@$SERVER_HOST << 'EOF'
           cd /www/wwwroot/annk.info/fe
