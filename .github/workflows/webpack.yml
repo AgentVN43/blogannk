@@ -56,14 +56,17 @@ jobs:
             fi
             
             # Install dependencies and build
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            #export NVM_DIR="$HOME/.nvm"
+            #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             
             echo "Installing dependencies..."
             npm ci
             
             echo "Building application..."
             npm run build
+
+            echo "Copying files to /fe folder..."
+            cp -r build/* /www/wwwroot/annk.info/fe/
             
             echo "Starting/Restarting PM2..."
             pm2 restart blog-annk || pm2 start npm --name "blog-annk" -- start
