@@ -69,4 +69,5 @@ jobs:
             pm2 restart blog-annk || pm2 start npm --name "blog-annk" -- start
             
             echo "Deployment completed successfully!"
-            DEPLOY
+DEPLOY
+            
