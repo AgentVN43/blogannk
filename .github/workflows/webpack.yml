@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -16,61 +14,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
-        run: |
-          npm ci
+        run: npm ci
 
-      - name: Build the app
-        run: |
-          npm run build
-        env:
-          CI: true
+      - name: Build website
+        run: npm run build
 
-      - name: Deploy to Production
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      - name: Deploy to server
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          export SSHPASS="$SSH_PASSWORD"
-          echo "Deploying application..."
-          sshpass -e ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << 'DEPLOY'
-            cd /www/wwwroot/annk.info/fe
-
-            # Initialize git if not already initialized
-            if [ ! -d .git ]; then
-              git init
-              git config --global --add safe.directory /www/wwwroot/annk.info/fe
-              git remote add origin https://github.com/AgentVN43/blogannk.git
-              git fetch
-              git checkout -f main
-            else
-              git fetch
-              git reset --hard origin/main
-            fi
-
-            # Install dependencies and build
-            #export NVM_DIR="$HOME/.nvm"
-            #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            
-            echo "Installing dependencies..."
-            npm ci
-
-            echo "Building application..."
-            npm run build
-
-            #echo "Copying files to /fe folder..."
-            cp -r build/* /www/wwwroot/annk.info/fe/
-            
-            #echo "Starting/Restarting PM2..."
-            #pm2 restart blog-annk || pm2 start npm --name "blog-annk" -- start
-
-            echo "Deployment completed successfully!"
-          DEPLOY
+          sshpass -p "$SSH_PASSWORD" rsync -a --delete ./build/ $SERVER_USER@$SERVER_HOST:/www/wwwroot/annk.info/fe/
