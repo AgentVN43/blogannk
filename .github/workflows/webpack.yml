@@ -27,10 +27,11 @@ jobs:
           npm ci
 
       - name: Build the app
-        run: npm run build
+        run: |
+          npm run build
         env:
           CI: true
-        
+
       - name: Deploy to Production
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
@@ -39,11 +40,10 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           export SSHPASS="$SSH_PASSWORD"
-          # Deploy application
           echo "Deploying application..."
-          sshpass -e ssh $SERVER_USER@$SERVER_HOST 'bash -s' << 'DEPLOY'
+          sshpass -e ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << 'DEPLOY'
             cd /www/wwwroot/annk.info/fe
-            
+
             # Initialize git if not already initialized
             if [ ! -d .git ]; then
               git init
@@ -55,19 +55,16 @@ jobs:
               git fetch
               git reset --hard origin/main
             fi
-            
+
             # Install dependencies and build
-            #export NVM_DIR="$HOME/.nvm"
-            #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            
             echo "Installing dependencies..."
             npm ci
-            
+
             echo "Building application..."
             npm run build
-            
+
             echo "Starting/Restarting PM2..."
             pm2 restart blog-annk || pm2 start npm --name "blog-annk" -- start
-            
+
             echo "Deployment completed successfully!"
-            DEPLOY
+          DEPLOY
