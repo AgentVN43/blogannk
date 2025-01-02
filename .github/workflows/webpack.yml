@@ -38,25 +38,35 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          # Ensure variables are set
-          if [ -z "$SSH_PASSWORD" ] || [ -z "$SERVER_USER" ] || [ -z "$SERVER_HOST" ]; then
-            echo "Error: Required environment variables are not set"
-            exit 1
-          fi
-          
-          # Configure SSH
-          mkdir -p ~/.ssh
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
-          chmod 600 ~/.ssh/config
-          
-          # Execute deployment command
           export SSHPASS="$SSH_PASSWORD"
-          sshpass -e ssh $SERVER_USER@$SERVER_HOST 'bash -s' << 'ENDSSH'
-            cd /www/wwwroot/annk.info/fe || exit 1
-            echo "Starting deployment..."
-            git pull
+          # Deploy application
+          echo "Deploying application..."
+          sshpass -e ssh $SERVER_USER@$SERVER_HOST 'bash -s' << 'DEPLOY'
+            cd /www/wwwroot/annk.info/fe
+            
+            # Initialize git if not already initialized
+            if [ ! -d .git ]; then
+              git init
+              git remote add origin https://github.com/AgentVN43/blogannk.git
+              git fetch
+              git checkout -f main
+            else
+              git fetch
+              git reset --hard origin/main
+            fi
+            
+            # Install dependencies and build
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            echo "Installing dependencies..."
             npm ci
+            
+            echo "Building application..."
             npm run build
-            pm2 restart next-app || pm2 start npm --name "next-app" -- start
-            echo "Deployment completed"
-            ENDSSH
+            
+            echo "Starting/Restarting PM2..."
+            pm2 restart blog-annk || pm2 start npm --name "blog-annk" -- start
+            
+            echo "Deployment completed successfully!"
+            DEPLOY
