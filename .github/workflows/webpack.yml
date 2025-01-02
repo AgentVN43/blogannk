@@ -17,20 +17,33 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
-          cache: "npm"
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
-
+          
       - name: Build website
         run: npm run build
+        env:
+          CI: true
 
-      - name: Deploy to server
+      - name: Deploy to Production
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          ssh-keyscan -H $SERVER_HOST >> /root/.ssh/known_hosts
-          sshpass -p "$SSH_PASSWORD" rsync -e "ssh -o StrictHostKeyChecking=no" -a --delete ./build/ $SERVER_USER@$SERVER_HOST:/www/wwwroot/annk.info/fe/
+          # Direct rsync of build files
+          sshpass -e rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./build/* $SERVER_USER@$SERVER_HOST:/www/wwwroot/annk.info/fe/
+          
+          # Verify deployment
+          sshpass -e ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << 'DEPLOY'
+            echo "Verifying deployment..."
+            cd /www/wwwroot/annk.info/fe
+            echo "Current directory: $(pwd)"
+            echo "Files in directory:"
+            ls -la
+            echo "Deployment completed successfully!"
+          DEPLOY
