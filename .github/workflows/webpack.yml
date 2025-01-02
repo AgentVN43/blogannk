@@ -32,4 +32,5 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          sshpass -p "$SSH_PASSWORD" rsync -a --delete ./build/ $SERVER_USER@$SERVER_HOST:/www/wwwroot/annk.info/fe/
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+          sshpass -p "$SSH_PASSWORD" rsync -e "ssh -o StrictHostKeyChecking=no" -a --delete ./build/ $SERVER_USER@$SERVER_HOST:/www/wwwroot/annk.info/fe/
