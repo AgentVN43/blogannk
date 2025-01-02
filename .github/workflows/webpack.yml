@@ -67,7 +67,7 @@ jobs:
             npm run build
 
             #echo "Copying files to /fe folder..."
-            #cp -r build/* /www/wwwroot/annk.info/fe/
+            cp -r build/* /www/wwwroot/annk.info/fe/
             
             #echo "Starting/Restarting PM2..."
             #pm2 restart blog-annk || pm2 start npm --name "blog-annk" -- start
