@@ -91,6 +91,17 @@ const sidebars = {
           },
           items: ["services/visa/visa-development"], // Match the path of the Markdown file
         },
+        {
+          type: "category",
+          label: "Education Services",
+          link: {
+            type: "generated-index",
+            title: "Education Services",
+            description: "Learn about our Visa Assistance services.",
+            slug: "/education/mentor-101",
+          },
+          items: ["education/mentor-101"], // Match the path of the Markdown file
+        },
       ],
     },
   ],

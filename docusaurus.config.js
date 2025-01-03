@@ -103,12 +103,11 @@ const config = {
             position: "left",
             label: "Services",
           },
-          // {
-          //   type: "docSidebar",
-          //   sidebarId: "servicesSidebar",
-          //   position: "left",
-          //   label: "Services",
-          // },
+          {
+            to: "/education/mentor-101", // Link to the web development page
+            label: "Education",
+            position: "left",
+          },
           {
             to: "/services/web-development", // Link to the web development page
             label: "Web Development",
