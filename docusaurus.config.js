@@ -10,8 +10,8 @@ import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "My Site",
-  tagline: "Dinosaurs are cool",
+  title: "Welcome to AnNK blog",
+  tagline: "CyberSecurity - Business -  Services",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -75,11 +75,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
+
       image: "img/docusaurus-social-card.jpg",
       navbar: {
         title: "ANNK BLOG",
         logo: {
-          alt: "My Site Logo",
+          alt: "ANNK Blog logo",
           src: "img/logo.svg",
         },
         items: [
@@ -93,6 +94,12 @@ const config = {
           // {to: '/cybersecurity', label: 'Cybersecurity', position: 'left'},
           {
             type: "docSidebar",
+            sidebarId: "educationSidebar",
+            position: "left",
+            label: "Sharing",
+          },
+          {
+            type: "docSidebar",
             sidebarId: "cybersecuritySidebar",
             position: "left",
             label: "Cybersecurity",
@@ -103,26 +110,22 @@ const config = {
             position: "left",
             label: "Services",
           },
+
           {
-            to: "/education/mentor-101", // Link to the web development page
-            label: "Education",
-            position: "left",
-          },
-          {
-            to: "/services/web-development", // Link to the web development page
+            to: "https://services.annk.info", // Link to the web development page
             label: "Web Development",
             position: "left",
           },
-          {
-            to: "/services/visa-assistance", // Link to the visa assistance page
-            label: "Visa Assistance",
-            position: "left",
-          },
-          {
-            to: "/services/api-development", // Link to the API development page
-            label: "API Development",
-            position: "left",
-          },
+          // {
+          //   to: "/services/visa-assistance", // Link to the visa assistance page
+          //   label: "Visa Assistance",
+          //   position: "left",
+          // },
+          // {
+          //   to: "/services/api-development", // Link to the API development page
+          //   label: "API Development",
+          //   position: "left",
+          // },
           {
             href: "https://github.com/facebook/docusaurus",
             label: "GitHub",
@@ -130,55 +133,70 @@ const config = {
           },
         ],
       },
-      footer: {
-        style: "dark",
-        links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Business",
-                to: "/business/introduction",
-              },
-            ],
-          },
-          {
-            title: "Community",
-            items: [
-              {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
-              {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
-                label: "X",
-                href: "https://x.com/docusaurus",
-              },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              {
-                label: "Blog",
-                to: "/blog",
-              },
-              {
-                label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-      },
+      // footer: {
+      //   style: "dark",
+      //   links: [
+      //     {
+      //       title: "Docs",
+      //       items: [
+      //         {
+      //           label: "Business",
+      //           to: "/business/introduction",
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       title: "Community",
+      //       items: [
+      //         {
+      //           label: "Stack Overflow",
+      //           href: "https://stackoverflow.com/questions/tagged/docusaurus",
+      //         },
+      //         {
+      //           label: "Discord",
+      //           href: "https://discordapp.com/invite/docusaurus",
+      //         },
+      //         {
+      //           label: "X",
+      //           href: "https://x.com/docusaurus",
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       title: "More",
+      //       items: [
+      //         {
+      //           label: "Blog",
+      //           to: "/blog",
+      //         },
+      //         {
+      //           label: "GitHub",
+      //           href: "https://github.com/facebook/docusaurus",
+      //         },
+      //       ],
+      //     },
+      //   ],
+      //   copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      //   lastUpdated: true,
+      // },
+
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
       },
+      plugins: [
+        [
+          "@docusaurus/plugin-content-docs",
+          {
+            id: "docs",
+            path: "docs", // Path to your docs directory
+            routeBasePath: "/", // Set the base path
+            sidebarPath: require.resolve("./sidebars.js"),
+            showLastUpdateAuthor: true, // Enable last updated author
+            showLastUpdateTime: true, // Enable last updated time
+          },
+        ],
+      ],
     }),
 };
 

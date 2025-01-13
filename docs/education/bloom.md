@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 slug: /education/mentor-101
-id: bloom-taxonomy
+id: mentor-101
 title: Bloom's Taxonomy
 ---
 
