@@ -1,10 +1,8 @@
 {
-  "label": "Web Learning",
-  "position": 3,
+  "label": "Web 101",
+  "position": 1,
   "link": {
     "type": "generated-index",
-    "description": "Welcome to Web 101.",
-  "slug":"/services/web/web-101"
+    "description": "Học web"
   }
-  
 }
