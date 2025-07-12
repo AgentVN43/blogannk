@@ -2,7 +2,7 @@
 sidebar_position: 2
 # slug: /intro
 id: lean-ai-starup #slug
-title: AI Không Thay Thế Bạn – Chính Bạn Là Người Quyết Định Cách Dùng AI
+title: AI Không Thay Thế Bạn – ...
 lastUpdated: 2025-06-25T10:30:00
 ---
 

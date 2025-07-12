@@ -90,8 +90,6 @@ const config = {
             position: "left",
             label: "Business",
           },
-          // {to: '/blog', label: 'Blog', position: 'left'},
-          // {to: '/cybersecurity', label: 'Cybersecurity', position: 'left'},
           {
             type: "docSidebar",
             sidebarId: "educationSidebar",
@@ -112,20 +110,10 @@ const config = {
           },
 
           {
-            to: "https://services.annk.info", // Link to the web development page
+            to: "https://services.annk.info",
             label: "Web Development",
             position: "left",
           },
-          // {
-          //   to: "/services/visa-assistance", // Link to the visa assistance page
-          //   label: "Visa Assistance",
-          //   position: "left",
-          // },
-          // {
-          //   to: "/services/api-development", // Link to the API development page
-          //   label: "API Development",
-          //   position: "left",
-          // },
           {
             href: "https://github.com/facebook/docusaurus",
             label: "GitHub",

@@ -1,6 +1,6 @@
 ---
 id: code-with-ai
-title: Cide with AI
+title: Code with AI
 slug: /services/web/code-with-ai
 ---
 
