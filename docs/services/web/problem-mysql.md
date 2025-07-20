@@ -4,7 +4,7 @@ title: Problems when working with MySQL
 slug: /services/web/problems-with-mysql
 ---
 
-# 🚀 Install MySQL on macOS
+## 🚀 Install MySQL on macOS
 
 ## 1. Cài qua bộ cài chính thức của MySQL
 
@@ -89,9 +89,41 @@ mysql -u root -p -e "CREATE DATABASE test DEFAULT CHARACTER SET utf8mb4 COLLATE 
 ```bash
 mysql -u root -p test < "/xx/yyy/zzz/yyy_18072025/yyyy_20250718.sql"
 ```
-
 ---
-## 6. Troubleshooting
+## 🚀 TIPS - TRICK
+### Xác định encoding của file CSV
+```bash
+file -I yourfile.csv
+```
+
+### Sử dụng LIMIT, WHERE, ORDER BY
+Sử dụng các trong truy vấn kiểm tra giúp:
+* Tối ưu hiệu suất (tránh quét bảng lớn).
+* Đảm bảo kết quả đúng logic (ví dụ: lấy bản ghi mới nhất, cao nhất, gần nhất...)
+```bash
+SELECT * FROM orders
+WHERE status = 'confirmed'
+ORDER BY created_at DESC
+LIMIT 10;
+```
+### Kiểm tra COUNT, NULL, duplicates
+Các lỗi phổ biến là:
+* Thiếu bản ghi (do filter hoặc join sai).
+* Dư bản ghi (do join nhầm n-n hoặc join chồng).
+* NULL không mong muốn.
+
+````
+-- Đếm bản ghi bị NULL
+SELECT COUNT(*) FROM users WHERE email IS NULL;
+````
+
+````
+-- Kiểm tra bản ghi trùng
+SELECT name, COUNT(*) FROM products GROUP BY name HAVING COUNT(*) > 1;
+```` 
+---
+## 🚀 Troubleshooting
+
 ### ❗ Problem: `ERROR at line 1: Unknown command '\-'.`
 
 #### 💥 Nguyên nhân:
