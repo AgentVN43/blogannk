@@ -5,16 +5,47 @@ id: mentor-101
 title: Bloom's Taxonomy
 ---
 
-Tuyên bố miễn trừ trách nhiệm đối với Nội dung Bài học về An ninh mạng:
+# Flow học tiếng Trung theo Bloom's Taxonomy
 
-Nội dung được cung cấp trong bài học này chỉ nhằm mục đích giáo dục và nhằm mục đích nâng cao nhận thức và hiểu biết về các khái niệm, rủi ro và thông lệ tốt nhất về an ninh mạng.
+## 📥 Input
+- **Chủ đề**: `string`
+- **Danh sách từ vựng đã học**: 
+  - `word`: string
+  - `pinyin`: string  
+  - `meaning`: string
 
-- **Không có ý định xấu:** Thông tin được chia sẻ ở đây không bao giờ được sử dụng cho mục đích xấu, bao gồm truy cập trái phép vào hệ thống, vi phạm dữ liệu hoặc các hoạt động phi đạo đức khác.
-- **Trách nhiệm đạo đức:** Học viên và người tham gia được yêu cầu tuân thủ các hướng dẫn đạo đức và luật lệ quản lý an ninh mạng tại khu vực pháp lý tương ứng của họ.
-- **Độ chính xác và tính cập nhật:** Mặc dù mọi nỗ lực đã được thực hiện để đảm bảo tính chính xác của thông tin, nhưng các mối đe dọa và thông lệ về an ninh mạng đang thay đổi nhanh chóng. Luôn xác minh các chi tiết quan trọng và tham khảo các nguồn cập nhật để triển khai thực tế.
-- **Trách nhiệm cá nhân:** Việc áp dụng kiến ​​thức và kỹ thuật được thảo luận hoàn toàn là trách nhiệm của người dùng. Cả người hướng dẫn và người tạo nội dung này đều không chịu trách nhiệm về bất kỳ hành vi sử dụng sai mục đích hoặc hậu quả nào phát sinh từ thông tin được cung cấp.
+## ⚙️ Process
 
+### Bước 1: Ghi nhớ (Remembering)
+**Hành động**: Tạo bảng từ vựng chi tiết
+**Các trường thông tin cần có**:
+- word
+- pinyin
+- meaning
+- writing_guide
+- radical
+- han_viet
+- common_phrases
 
-**Hãy luôn an toàn, giữ đạo đức và góp phần xây dựng một môi trường internet an toàn!**
+### Bước 2: Hiểu (Understanding)
+**Hành động**: Phân tích ngữ nghĩa và cấu tạo
+**Các trường thông tin cần có**:
+- word_analysis
+- radical_explanation
+- usage_examples
+- related_words
 
+### Bước 3: Vận dụng (Applying)
+**Hành động**: Tạo ngữ cảnh sử dụng
+**Các trường thông tin cần có**:
+- dialogue
+- translation
+- word_usage_explanation
+- practice_quiz
 
+## 📤 Output
+**Bài học có cấu trúc**:
+- Bảng từ vựng (`vocabulary_table`)
+- Phân tích từ (`word_analysis`)
+- Đoạn hội thoại ngữ cảnh (`contextual_dialogue`)
+- Bài tập luyện tập (`practice_exercises`)
