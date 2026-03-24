@@ -47,7 +47,7 @@ const config = {
           // Remove this to remove the "edit this page" links.
           // editUrl:
           //   "https://github.com/AgentVN43/blogannk/tree/main/packages/create-docusaurus/templates/shared/",
-          // routeBasePath: "/",
+          routeBasePath: "/",
         },
         blog: {
           showReadingTime: true,
