@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 slug: /education/age-ai/foundation/module-4
-id: age-ai-foundation
+id: age-ai-foundation-module-4
 title: Module 4
 ---
 
