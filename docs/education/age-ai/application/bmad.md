@@ -1,8 +1,8 @@
 ---
-sidebar_position: 4
-slug: /education/bmad
-id: bmad-ai
-title: BMAD
+sidebar_position: 2
+slug: /education/age-ai/application/bmad
+id: age-ai-application-bmad
+title: Ứng dụng BMAD trong xây dựng hệ thống
 ---
 
 OK 👍
