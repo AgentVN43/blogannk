@@ -5,7 +5,6 @@ id: age-ai-foundation
 title: Module 4
 ---
 
-
 # Module 4 — AI Simulation
 ## Thực chiến: phản biện AI output trong môi trường an toàn
 

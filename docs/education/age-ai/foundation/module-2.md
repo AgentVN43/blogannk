@@ -4,6 +4,7 @@ slug: /education/age-ai/foundation/module-2
 id: age-ai-foundation
 title: Module 2
 ---
+
 # Module 2 — Logic, Flow & Data Thinking
 ## Xây dựng tư duy chính xác về luồng xử lý và dữ liệu
 

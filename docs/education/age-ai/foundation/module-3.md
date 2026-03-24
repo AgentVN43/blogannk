@@ -5,7 +5,6 @@ id: age-ai-foundation
 title: Module 3
 ---
 
-
 # Module 3 — AI Literacy
 ## Hiểu AI thực sự hoạt động thế nào để không bị AI dẫn dắt
 

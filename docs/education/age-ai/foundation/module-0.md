@@ -162,5 +162,3 @@ Tại sao automation bias đặc biệt nguy hiểm hơn khi làm việc với A
 > Có bao nhiêu bias có thể đang xảy ra ở đây? Bạn sẽ làm khác đi như thế nào?
 
 ---
-
----

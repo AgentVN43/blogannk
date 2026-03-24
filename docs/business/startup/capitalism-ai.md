@@ -9,7 +9,7 @@ title: Tư bản AI - Công cụ hay gánh nặng
 Này các chủ doanh nghiệp SME, nghe kỹ này: AI, Ads, TikTok Shop hay Freeship... bản chất chúng là **CÔNG CỤ**, nhưng nếu dùng không khéo, chúng là **LƯỠI DAO** cứa thẳng vào lợi nhuận của bạn đấy!
 
 ### 1. AI: Trợ lý đắc lực hay "Đóng họ" cho Sam Altman?
-Trong giới Software 20 năm qua, tôi thấy người ta cuồng đủ thứ: từ Web 2.0 đến Blockchain và giờ là AI. 
+Trong giới Software hơn 15 năm, tôi thấy người ta cuồng đủ thứ: từ Web 2.0 đến Blockchain và giờ là AI. 
 * **Thực tế:** Nếu bạn nạp ChatGPT Plus, mua Midjourney để tạo ra mấy cái Content "vô hồn", đọc phát biết ngay máy viết, thì chúc mừng: Bạn đang làm từ thiện cho các đại gia Silicon Valley.
 * **Góc nhìn Tech:** AI chỉ thực sự "win" khi nó giúp quy trình sản xuất của bạn từ 10 bước xuống còn 2 bước với chi phí rẻ hơn. Nếu dùng AI mà vẫn phải nuôi một đội ngồi sửa "rác" của AI, thì dẹp đi! Đó là **chi phí cố định**, không phải lợi thế cạnh tranh.
 
