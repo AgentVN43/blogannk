@@ -8,8 +8,7 @@ title: Module 3
 # Module 3 — AI Literacy
 ## Hiểu AI thực sự hoạt động thế nào để không bị AI dẫn dắt
 
-**Thời lượng:** 1 ngày (chiều ngày 3 + sáng ngày 4)
-**Bloom target:** Ghi nhớ → Hiểu → Vận dụng
+**Thời lượng:** 1 ngày
 
 ---
 

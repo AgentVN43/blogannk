@@ -8,8 +8,7 @@ title: Module 4
 # Module 4 — AI Simulation
 ## Thực chiến: phản biện AI output trong môi trường an toàn
 
-**Thời lượng:** Nửa ngày (chiều ngày 4)
-**Bloom target:** Vận dụng (toàn bộ module)
+**Thời lượng:** Nửa ngày
 
 ---
 

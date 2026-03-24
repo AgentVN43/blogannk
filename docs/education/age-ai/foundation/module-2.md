@@ -8,8 +8,7 @@ title: Module 2
 # Module 2 — Logic, Flow & Data Thinking
 ## Xây dựng tư duy chính xác về luồng xử lý và dữ liệu
 
-**Thời lượng:** 1 ngày (chiều ngày 2 + sáng ngày 3)
-**Bloom target:** Ghi nhớ → Hiểu → Vận dụng
+**Thời lượng:** 1 ngày
 
 ---
 
