@@ -2,7 +2,7 @@
 sidebar_position: 2
 slug: /education/n8n
 id: n8n-101
-title: Skills: n8n workflow
+title: Skills | n8n workflow
 ---
 ```
 # CLAUDE.md
