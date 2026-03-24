@@ -17,7 +17,7 @@ Trong giới Software hơn 15 năm, tôi thấy người ta cuồng đủ thứ:
 Làm Web bao năm, tôi luôn bảo khách hàng: "Xây nhà trên đất người khác thì phải trả tiền thuê". 
 * **Hồi đầu:** Tư bản vung tiền (Burn cash) để dụ anh em mình vào. Lúc đó lộc rơi lộc vãi, ai cũng tưởng mình là thiên tài kinh doanh. 
 * **Bây giờ:** Khi "cả làng" ập vào, sàn thu phí, thuế siết chặt, phí ship tăng. Lúc này, bạn không còn là "đối tác" nữa, bạn là **công cụ** để sàn tối ưu hóa lợi nhuận của họ. 
-* **Góc nhìn Sushi:** Nếu một miếng Sashimi tôi bán ra mà phí sàn + phí ship + Ads chiếm mẹ nó 40%, thì thà tôi mời khách đến quán, phục vụ tận tay cho ấm lòng, còn hơn "cày" để nuôi anh Grab, anh Shopee!
+* **Góc nhìn Sushi:** Nếu một miếng Sashimi tôi bán ra mà phí sàn + phí ship + Ads chiếm 40%, thì thà tôi mời khách đến quán, phục vụ tận tay cho ấm lòng, còn hơn "cày" để nuôi anh Grab, anh Shopee!
 
 ### 3. Đừng để "Trang sức" làm nặng túi tiền
 Nhiều ông chủ SME bây giờ buồn cười lắm, cứ thích "đeo vàng" cho doanh nghiệp: 
@@ -29,7 +29,7 @@ Nhưng cuối ngày, nhìn vào bảng cân đối kế toán thì... **Lỗ lò
 
 ---
 
-## 🔵 LỜI KHUYÊN TỪ "LÃO LÀNG"
+## 🔵 LỜI KHUYÊN TỪ "MÌNH"
 
 Nếu muốn tồn tại trong kỷ nguyên "Tư bản AI" này, hãy nhớ 3 chữ vàng: **Sản phẩm - Giá - Sự chú ý.**
 
