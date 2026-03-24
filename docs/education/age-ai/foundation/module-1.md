@@ -1,8 +1,8 @@
 ---
 sidebar_position: 2
-slug: /education/age-ai/level1/foundation/module-1
+slug: /education/age-ai/foundation/module-1
 id: age-ai-foundation
-title: Foundation
+title: Module 1
 ---
 
 # Module 1 — Systems Thinking & Problem Framing
