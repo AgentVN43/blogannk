@@ -5,26 +5,6 @@ id: age-ai-application-bmad
 title: Ứng dụng BMAD trong xây dựng hệ thống
 ---
 
-OK 👍
-Chúng ta kết thúc brainstorm và chuyển sang **Idea Organization & Structured Output**.
-
-Bạn muốn:
-
-* 📘 **Handbook vừa phải**
-* Không lý thuyết dài dòng
-* Mỗi role biết:
-
-  * Khi start project → làm gì
-  * Chạy workflow gì
-  * Command gì
-* Thực hành trực tiếp theo guideline BMAD
-
----
-
-# 📘 BMAD TEAM HANDBOOK (Draft v1 – Practical Version)
-
----
-
 # 1️⃣ Mục tiêu handbook
 
 Sau khi đọc xong, mỗi role có thể:
