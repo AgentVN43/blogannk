@@ -8,7 +8,7 @@ title: Day 1
 # Day 1 — Thiết lập môi trường + Biến JS (const/let/var)
 
 
-## PHẦN 1 — LÝ THUYẾT (Bloom's: Remember + Understand)
+## PHẦN 1 — LÝ THUYẾT 
 
 ### 1.1. Node.js và VS Code — "Công cụ để chạy code"
 
@@ -282,26 +282,9 @@ console.error('Đã xảy ra lỗi khi đăng nhập');
 ```
 
 
-## PHẦN 3 — BÀI THỰC HÀNH TRÊN PROJECT THỰC (Bloom's: Apply + Analyze)
+## PHẦN 3 — BÀI THỰC HÀNH TRÊN PROJECT THỰC
 
-### 🎯 Bài thực hành: Khai báo biến cho flow đăng nhập
-
-**Bối cảnh:** Project của bạn là app quản lý đơn hàng B2B (có flow: đăng nhập → tạo đơn hàng → chờ duyệt → xác nhận giao hàng). Hôm nay bạn sẽ viết **các biến chứa thông tin đăng nhập và URL** để chuẩn bị cho việc viết test login ở những ngày sau.
-
-**📝 Checklist các bước cần làm:**
-
-- [ ] **Bước 1:** Mở VS Code, tạo một thư mục mới cho project (đặt tên là `playwright-automation` hoặc tên tùy chọn)
-- [ ] **Bước 2:** Trong thư mục đó, tạo một file mới đặt tên là `day1-variables.ts` (đuôi `.ts` là TypeScript)
-- [ ] **Bước 3:** Khai báo các biến sau bằng `const` hoặc `let` phù hợp:
-    - `BASE_URL`: địa chỉ của app (ví dụ: `https://your-app.com`)
-    - `LOGIN_URL`: đường dẫn đến trang login (ví dụ: `/login`)
-    - `VALID_USERNAME`: tên đăng nhập hợp lệ
-    - `VALID_PASSWORD`: mật khẩu hợp lệ
-    - `loginAttempts`: số lần thử đăng nhập, bắt đầu từ 0
-- [ ] **Bước 4:** Dùng **template literal** để tạo một biến `loginMessage` có nội dung:
-    > `"Đang đăng nhập vào [BASE_URL][LOGIN_URL] với username [VALID_USERNAME]"`
-    (thay các phần trong `[]` bằng giá trị biến tương ứng)
-- [ ] **Bước 5:** Dùng `console.log()` để in ra màn hình các biến đã khai báo (để kiểm tra xem đúng chưa)
+Thực hành trong project.
 
 ---
 
@@ -320,7 +303,7 @@ Hãy trả lời câu hỏi này trước khi viết code — điều này giúp
 3. `console.log()` in ra được loginMessage với nội dung đúng như mong đợi (đã được ghép bằng template literal)
 
 
-## PHẦN 4 — INTERVIEW Q&A (Bloom's: Evaluate)
+## PHẦN 4 — INTERVIEW Q&A
 
 ### Câu 1: "Tại sao trong thực tế, anh/chị thường dùng `const` làm mặc định thay vì `let` hoặc `var`?"
 
