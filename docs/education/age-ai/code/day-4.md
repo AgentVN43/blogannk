@@ -5,300 +5,212 @@ id: age-ai-code-day-4
 title: Day 4
 ---
 
-# Day 4 — Cấu trúc Playwright project + Chạy test mẫu
+### PHẦN 1 — LÝ THUYẾT
 
----
+**1. Async/Await — Chờ browser action hoàn thành**
 
-## PHẦN 1 — LÝ THUYẾT
+Đây là khái niệm **quan trọng nhất** toàn bộ khóa học. Mọi thao tác với browser đều cần `await`.
 
-### 1. Playwright Project là gì? (Giải thích bằng ngôn ngữ đơn giản)
+Khi test manual, bạn click nút, mắt thấy spinner quay, não tự hiểu "đợi xong rồi kiểm tra". JavaScript thì không — nó chạy cực nhanh (mili-giây). Không có `await`, code sẽ click và **ngay lập tức** nhảy sang dòng tiếp theo kiểm tra kết quả — lúc đó API chưa trả về, test báo lỗi "Element not found".
 
-Khi bạn bắt đầu viết automation, bạn không chỉ viết code lẻ tẻ mà cần có một **khuôn khổ tổ chức** (project structure) để quản lý tất cả các file test, cấu hình, báo cáo và dependencies. Playwright cung cấp sẵn một cấu trúc tiêu chuẩn để bạn bắt đầu.
+- **`async`** đánh dấu hàm có chứa tác vụ cần thời gian (gọi API, tải trang, click).
+- **`await`** bắt buộc code "tạm dừng" ở dòng đó cho đến khi hành động hoàn tất.
 
-**Hãy tưởng tượng** giống như cách bạn tổ chức thư mục test case trong manual testing:
+> **Quy tắc nhớ nhanh:** Dòng nào gọi `page.` → thêm `await` trước nó.
 
-| Manual Testing | Playwright Project |
-|---|---|
-| Thư mục `TestCases/` | Thư mục `tests/` — chứa các file `.spec.ts` |
-| File Excel chứa test data | Thư mục `test-data/` hoặc file `.json` |
-| File hướng dẫn chạy test (run instruction) | File `playwright.config.ts` — cấu hình chạy test |
-| Báo cáo test (bug report) | HTML Report tự động sinh sau khi chạy |
-| Thư viện hàm dùng chung (common functions) | Thư mục `pages/` hoặc `utils/` — chứa code tái sử dụng |
+**2. Object và Destructuring — Quản lý test data**
 
-**Vấn đề thực tế mà cấu trúc này giải quyết:**
+Object là cách nhóm thông tin liên quan (sản phẩm, user, config) vào một biến duy nhất.
 
-- Khi bạn manual test, bạn có thói quen mở file Excel → tìm test case → chạy từng bước → đánh dấu PASS/FAIL. 
-- Khi automation, nếu không có cấu trúc rõ ràng, bạn sẽ gặp rối:
-  - ❌ Bạn không biết test script nào đã chạy, test nào chưa
-  - ❌ Không tìm thấy file cấu hình để thay đổi browser hay timeout
-  - ❌ Báo cáo kết quả bị trộn lẫn, khó đọc
-  - ❌ Code không tái sử dụng được — mỗi test viết lại từ đầu
+```typescript
+// Object — nhóm thông tin sản phẩm
+const greyJacket = {
+  name: 'Grey jacket',
+  price: '£55.00',
+  slug: 'grey-jacket',
+};
+// Truy cập: greyJacket.name, greyJacket.price, greyJacket.slug
 
-**Cấu trúc Playwright mặc định sau khi chạy `npm init playwright@latest` sẽ có:**
+// Destructuring — lấy nhiều field cùng lúc
+const { name, price } = greyJacket;
+// Tương đương: const name = greyJacket.name; const price = greyJacket.price;
+```
+
+Destructuring đặc biệt hữu ích khi nhận tham số: `async ({ page }) => {...}` — đó là destructuring lấy `page` từ object Playwright truyền vào.
+
+**2.1. State trong Automation Test là gì?**
+
+**State** = trạng thái của ứng dụng tại một thời điểm. Khi test manual, bạn tự quản lý state bằng mắt và não: "À mình đang ở trang login, chưa đăng nhập", "Mình vừa thêm sản phẩm vào giỏ, giỏ có 1 item". Trong automation, state bao gồm:
+
+| Loại state | Ví dụ | Tác động đến test |
+|:---|:---|:---|
+| **Auth** | Đã login / chưa login | Test checkout cần đã login |
+| **URL** | Đang ở trang nào | Click link chỉ đúng nếu đang ở trang cha |
+| **Cart** | Giỏ hàng có sản phẩm chưa | Test checkout cần cart có hàng |
+| **Data** | DB có dữ liệu gì | Test tìm kiếm cần có sản phẩm trong DB |
+| **Cookies** | Session, preference | Lưu trạng thái "đã đóng banner" |
+
+**Vấn đề:** Nếu test A login thành công rồi logout, test B chạy sau có thể bị ảnh hưởng (session cũ, cart cũ). Đây gọi là **state leak** — nguyên nhân số 1 gây flaky test.
+
+**Giải pháp Playwright:** Mỗi `test()` tự động được cấp một **browser context riêng** (cookies, localStorage sạch). Bạn không cần làm gì thêm — Playwright đã lo isolation cơ bản.
+
+> **Quy tắc cho QC:** Trong mỗi test, luôn dùng `page.goto()` để điều hướng đến trang mình cần, KHÔNG giả định rằng mình đang ở trang nào từ test trước. Mỗi test là một "phiên làm việc" hoàn toàn mới.
+
+**3. Array và `for...of` — Test data-driven**
+
+Array chứa danh sách test data. `for...of` duyệt từng phần tử để sinh test case tự động.
+
+```typescript
+// Array test data
+const products = [
+  { name: 'Grey jacket', price: '£55.00', slug: 'grey-jacket' },
+  { name: 'Noir jacket', price: '£60.00', slug: 'noir-jacket' },
+];
+
+// for...of — sinh 1 test case cho mỗi sản phẩm
+for (const product of products) {
+  test(`${product.name} — giá hiển thị đúng`, async ({ page }) => {
+    await page.goto(`/products/${product.slug}`);
+    await expect(page.getByText(product.price)).toBeVisible();
+  });
+}
+// Kết quả: 2 test case độc lập trong HTML report
+```
+
+**4. `npm init playwright@latest` — Cài đặt 1 chạm**
+
+Ngày xưa cài Playwright thủ công rất mệt: tải browser driver, tạo folder, config. Lệnh này giống "nút cài đặt tự động": nó hỏi vài câu (ngôn ngữ, browser) và setup 100% môi trường Playwright hoàn chỉnh.
+
+**5. Cấu trúc Playwright project**
+
+Sau khi chạy `npm init playwright@latest`, project có cấu trúc:
 
 ```
 my-playwright-project/
-├── tests/                    # Thư mục chứa tất cả test script
-│   └── example.spec.ts       # File test mẫu (bạn sẽ chạy thử)
-├── test-results/             # Thư mục chứa kết quả từng lần chạy (tự tạo khi chạy)
-├── playwright-report/        # Thư mục chứa HTML report (tự tạo)
-├── playwright.config.ts      # File cấu hình chính
-├── package.json              # Quản lý dependencies và scripts
-├── package-lock.json         # Khóa version dependencies
-└── .gitignore                # File bỏ qua khi push lên Git
+├── tests/                    # Chứa file .spec.ts (test script)
+│   └── example.spec.ts       # File test mẫu
+├── test-results/             # Kết quả chạy test (tự tạo)
+├── playwright-report/        # HTML report (tự tạo)
+├── playwright.config.ts      # Cấu hình chính (browser, timeout, report...)
+├── package.json              # Dependencies và scripts
+└── .gitignore
 ```
 
----
+| Manual Testing | Playwright |
+|---|---|
+| Thư mục `TestCases/` | `tests/` — file `.spec.ts` |
+| File Excel test data | `test-data/` hoặc object/array trong code |
+| File hướng dẫn chạy | `playwright.config.ts` |
+| Báo cáo Excel | HTML Report tự động |
 
-### 2. File `example.spec.ts` là gì?
+**6. File `.spec.ts` và HTML Report**
 
-File `.spec.ts` là **file test** — nơi bạn viết các kịch bản kiểm thử tự động. Playwright cung cấp một file mẫu tên `example.spec.ts` để bạn làm quen.
+- **`.spec.ts`** = file test. Mỗi file chứa nhiều `test()` (test case). Dùng `test.describe()` để nhóm.
+- **HTML Report** = báo cáo tự động sau khi chạy test. Gồm: PASS/FAIL, thời gian, screenshot khi fail, trace từng bước.
 
-**So sánh với manual testing:**
-- Manual: bạn mở file Word/Excel, đọc từng bước và làm thủ công.
-- Automation: bạn viết code trong file `.spec.ts`, Playwright sẽ tự động thực hiện từng bước đó trên browser.
+> So với manual: thay vì đánh dấu PASS/FAIL trong Excel, Playwright tạo report tự động có trace để debug.
 
-**Điểm quan trọng cần nhớ:**
-
-1. **File `.spec.ts` = 1 test suite** — có thể chứa nhiều test case (nhiều function `test()`)
-2. **Mỗi `test()` = 1 test case** — tương ứng với 1 kịch bản kiểm thử cụ thể
-3. **Hàm `test.describe()`** — dùng để nhóm các test case có liên quan (cùng flow, cùng feature)
-4. **File mặc định `example.spec.ts`** — chỉ mang tính chất demo, bạn sẽ xóa nó và viết test cho project thật sau
-
----
-
-### 3. HTML Report là gì?
-
-Sau khi chạy test, Playwright tự động tạo ra một **HTML Report** (báo cáo dạng web) giúp bạn xem kết quả một cách trực quan.
-
-**So sánh với manual testing:**
-- Manual: bạn tự đánh dấu PASS/FAIL trong Excel, đôi khi kèm ảnh chụp màn hình.
-- Automation: Playwright tạo báo cáo tự động, có thể bao gồm:
-  - ✅ Test PASS hay FAIL
-  - ⏱️ Thời gian chạy từng test
-  - 🖼️ Screenshot khi fail (nếu cấu hình)
-  - 📋 Step-by-step trace (xem từng bước đã làm gì)
-  - 📊 Thống kê tổng quan (bao nhiêu test chạy, bao nhiêu pass/fail)
-
-**Lợi ích:** Bạn có thể share report này với team (PM, Dev, QC khác) để mọi người cùng xem kết quả, giống như bạn từng share file Excel báo cáo test.
+**Điểm chính cần nhớ:**
+- **`async/await`** là quan trọng nhất — mọi `page.` đều cần `await`.
+- **State** là trạng thái ứng dụng (auth, URL, cart...). Mỗi test tự tạo state riêng — không phụ thuộc test khác.
+- **Object** nhóm dữ liệu liên quan. **Destructuring** `{ a, b } = obj` lấy nhiều field cùng lúc.
+- **Array + `for...of`** giúp viết 1 lần, chạy nhiều test data.
+- `npm init playwright@latest` = cài đặt tự động toàn bộ môi trường.
+- playwright.config.ts = trung tâm cấu hình. HTML Report = báo cáo trực quan.
 
 ---
 
-### 4. Các điểm chính cần nhớ
+### PHẦN 2 — CODE EXAMPLE
 
-- 📁 **Cấu trúc project giúp tổ chức** — giống như bạn sắp xếp test case vào thư mục trong manual
-- ⚙️ **File `playwright.config.ts` là "bộ điều khiển trung tâm"** — nơi set browser, timeout, report format
-- 🧪 **File `.spec.ts` chứa test script** — mỗi file là một nhóm test case
-- 📊 **HTML Report là báo cáo tự động** — giúp bạn đọc kết quả nhanh, có trace để debug khi fail
-- 🚀 **Chạy test = Playwright mở browser tự động** — không cần làm thủ công từng bước như manual
-
----
-
-## PHẦN 2 — CODE EXAMPLE
-
-### Ví dụ 1: Cách tạo và chạy file test đầu tiên
-
-#### ❌ CÁCH SAI
+**async/await — Đúng và Sai:**
 
 ```typescript
-// ❌ Đừng viết thế này - Không dùng cấu trúc test của Playwright
-// 👎 Viết code JavaScript lộn xộn, không theo chuẩn Playwright
+// ❌ SAI — thiếu await
+test('login', ({ page }) => {
+  page.goto('https://b2b-app.com/login');
+  page.fill('#username', 'admin');
+  page.click('#login-btn');
+  expect(page.locator('.welcome')).toBeVisible(); // Lỗi: chưa load xong
+});
 
-// Tự viết function mở browser (rất dài dòng)
-async function openBrowser() {
-  // ... hàng trăm dòng code tự viết lại
-}
-
-// Không dùng describe/spec tổ chức test
-openBrowser();
-clickLogin();
-checkResult();
-// -> Không có report, không có trace, không biết test nào fail
-```
-
-#### ✅ CÁCH ĐÚNG
-
-```typescript
-// ✅ Cách đúng - Dùng cú pháp Playwright chuẩn
-// 📁 File: tests/demo-first-test.spec.ts
-
-import { test, expect } from '@playwright/test';  // Import các hàm cần thiết
-
-// Dùng test.describe để nhóm các test case liên quan
-test.describe('Nhóm test cho chức năng Đăng nhập', () => {
-
-  // test() là một test case cụ thể
-  test('TC001 - Đăng nhập thành công với tài khoản hợp lệ', async ({ page }) => {
-    // page là đối tượng đại diện cho browser tab, Playwright tự tạo
-    
-    // 1. Điều hướng đến trang login (giả định)
-    await page.goto('https://example.com/login');
-    
-    // 2. Nhập username và password vào các field
-    await page.fill('#username', 'tester01');  // fill = nhập text
-    await page.fill('#password', 'Abc@123');
-    
-    // 3. Click nút Login
-    await page.click('#login-button');
-    
-    // 4. Kiểm tra xem đã login thành công chưa
-    // Giả định sau login, page có chứa text "Chào mừng"
-    await expect(page.locator('.welcome-message')).toContainText('Chào mừng');
-    
-    // Nếu expectation đúng -> test PASS
-    // Nếu expectation sai -> test FAIL và có screenshot trong report
-  });
-
-  test('TC002 - Đăng nhập thất bại với mật khẩu sai', async ({ page }) => {
-    await page.goto('https://example.com/login');
-    await page.fill('#username', 'tester01');
-    await page.fill('#password', 'wrongpassword');
-    await page.click('#login-button');
-    
-    // Kiểm tra hiển thị thông báo lỗi
-    await expect(page.locator('.error-message')).toBeVisible();
-  });
+// ✅ ĐÚNG — có await
+test('login', async ({ page }) => {
+  await page.goto('https://b2b-app.com/login');
+  await page.fill('#username', 'admin');
+  await page.click('#login-btn');
+  await expect(page.locator('.welcome')).toBeVisible();
 });
 ```
 
----
+**Object + Destructuring trong test:**
 
-### 📊 So sánh — Vì sao cách ĐÚNG tốt hơn?
+```typescript
+// Test data dạng object
+const user = {
+  email: 'admin@b2b.com',
+  password: 'Abc@123',
+  role: 'admin',
+};
 
-| Tiêu chí | ❌ Cách SAI | ✅ Cách ĐÚNG |
-|---|---|---|
-| **Tổ chức** | Code lộn xộn, không phân biệt được test case này với test case khác | Dùng `test.describe` và `test()` phân tách rõ ràng từng test case |
-| **Báo cáo** | Tự viết log, không có báo cáo chuẩn | Playwright tự động sinh HTML Report, có trace, screenshot khi fail |
-| **Tái sử dụng** | Viết lại code mở browser cho mỗi test | Playwright quản lý browser lifecycle (mở/đóng tự động) |
-| **Debug** | Không có tool hỗ trợ, phải tự đoán lỗi | Có trace, video, screenshot — xem lại từng step |
-
----
-
-### Ví dụ 2: Chạy test bằng command
-
-#### ❌ CÁCH SAI
-
-```bash
-# ❌ Không dùng lệnh Playwright
-# 👎 Chạy kiểu thủ công, không có report
-
-node my-test-file.js   # Chạy file JS thường, không có report
+// Destructuring — code gọn hơn
+const { email, password } = user;
+await page.getByLabel('Email').fill(email);
+await page.getByLabel('Password').fill(password);
 ```
 
-#### ✅ CÁCH ĐÚNG
+**Array + for...of — data-driven test:**
 
-```bash
-# ✅ Dùng lệnh Playwright để chạy test
+```typescript
+// 1 array cho nhiều test case
+const testUsers = [
+  { email: 'admin@b2b.com', pass: 'Abc@123', expectSuccess: true },
+  { email: 'wrong@b2b.com', pass: 'wrong', expectSuccess: false },
+];
 
-npx playwright test                              # Chạy TẤT CẢ test trong thư mục tests/
-npx playwright test example.spec.ts             # Chạy 1 file cụ thể
-npx playwright test --project=chromium          # Chạy trên Chromium (Chrome/Edge)
-npx playwright test --headed                    # Chạy với browser hiện hình (thay vì headless)
-npx playwright show-report                      # Mở HTML Report tự động trên browser
+for (const { email, pass, expectSuccess } of testUsers) {
+  test(`Login với ${email}`, async ({ page }) => {
+    await page.goto('https://b2b-app.com/login');
+    await page.getByLabel('Email').fill(email);
+    await page.getByLabel('Password').fill(pass);
+    await page.getByRole('button', { name: 'Sign in' }).click();
+
+    if (expectSuccess) {
+      await expect(page).toHaveURL(/dashboard/);
+    } else {
+      await expect(page.getByText('Invalid credentials')).toBeVisible();
+    }
+  });
+}
 ```
 
-**Lưu ý quan trọng:**
-- `npx playwright test` — là lệnh chính để chạy automation
-- Mặc định Playwright chạy ở chế độ **headless** (không hiện browser) để nhanh hơn
-- Thêm `--headed` nếu muốn xem browser hiện hình, giống như đang manual test
+**Chạy test với command:**
+
+```bash
+npx playwright test                          # chạy tất cả
+npx playwright test login.spec.ts            # chạy 1 file
+npx playwright test --headed                 # hiện browser (mặc định headless)
+npx playwright test --project=chromium       # chạy trên Chromium
+npx playwright show-report                   # mở HTML report
+```
 
 ---
 
-## PHẦN 3 — BÀI THỰC HÀNH TRÊN PROJECT THỰC
+### PHẦN 3 — INTERVIEW Q&A
 
-**📌 Dựa trên project thực của bạn:** App quản lý đơn hàng B2B (React). Có flow: **đăng nhập → tạo đơn hàng → chờ duyệt → xác nhận giao hàng**.
+**Câu 1:** "Tại sao Playwright dùng async/await? Không có await thì sao?"
+→ Browser actions (click, navigate, fill) là bất đồng bộ. `async/await` giúp code chạy tuần tự, chờ action xong mới làm bước tiếp. Không `await` → code chạy loạn xạ, test flaky.
 
-### 📝 Bài thực hành: Chạy test mẫu trên flow Đăng nhập
+**Câu 2:** "Destructuring `{ page }` trong tham số test có nghĩa gì?"
+→ Playwright truyền vào một object chứa `page`, `browser`, `context`... Destructuring lấy thẳng property `page` từ object đó, không cần viết `const page = ...`.
 
-**Mục tiêu:** Tạo file test đầu tiên cho project thật và chạy thành công trên môi trường local của bạn.
+**Câu 3:** "`for...of` khác gì với `for` (for i) thông thường?"
+→ `for...of` duyệt trực tiếp từng phần tử array. Không cần dùng index, code sáng hơn, ít lỗi hơn.
 
----
+**Câu 4:** "Khi nào dùng `npm init playwright@latest` thay vì cài từng gói?"
+→ Dùng cho project mới — nó tạo cấu trúc + config + tải browser. Cài từng gói (`npm i @playwright/test`) khi thêm Playwright vào project có sẵn.
 
-### 🔍 Câu hỏi gợi mở — PHÂN TÍCH trước khi viết code
+**Câu 5:** "Nếu quên khai báo `async` cho test nhưng vẫn dùng `await`, điều gì xảy ra?"
+→ Lỗi cú pháp ngay lập tức. `await` chỉ hợp lệ trong hàm được đánh dấu `async`.
 
-*Trước khi bắt tay vào code, hãy quan sát thật kỹ trang Đăng nhập của app thực và trả lời các câu hỏi sau (quan sát trên app, không phải đoán):*
-
-1. **Element load như thế nào?** — Form login (username, password, button) xuất hiện ngay khi mở trang hay có độ trễ? Có loading spinner nào không?
-2. **Element nào là duy nhất để xác định?** — Nhìn vào code HTML (F12), xem username field có `id` hay `data-testid` rõ ràng không? Nếu không, dùng selector gì thay thế?
-3. **Sau khi login, làm sao biết thành công?** — Có element nào xuất hiện khi login thành công không (ví dụ: tên user ở góc phải, menu "Đơn hàng", ...)?
-4. **App có popup confirm khi logout không?** — Nếu có, việc này ảnh hưởng gì đến test (cần xử lý popup)?
-
----
-
-### ✅ Checklist các bước thực hành
-
-| Bước | Hành động | Ghi chú |
-|---|---|---|
-| **1** | Mở terminal, chạy `npx playwright test example.spec.ts` để chạy test mẫu và xem nó PASS | Đảm bảo môi trường đã cài đặt đúng |
-| **2** | Chạy `npx playwright show-report` để xem HTML Report | Lần đầu xem báo cáo dạng web |
-| **3** | Mở file `playwright.config.ts`, tìm dòng `testDir: 'tests'` và `reporter: 'html'` | Xác định cấu hình đang dùng |
-| **4** | Tạo file mới `tests/login-test.spec.ts` | Thay vì sửa file example |
-| **5** | Viết test cho flow Đăng nhập của app thực: | |
-| | a. `await page.goto('URL đăng nhập của app')` | Lấy URL từ browser |
-| | b. `await page.fill('selector của username field', 'tài khoản thật')` | |
-| | c. `await page.fill('selector của password field', 'mật khẩu thật')` | |
-| | d. `await page.click('selector của nút Login')` | |
-| | e. `await expect(page.locator('selector sau login')).toBeVisible()` | Ví dụ: menu Đơn hàng, tên user |
-| **6** | Chạy test với lệnh `npx playwright test login-test.spec.ts --headed` để xem browser hiện hình | Quan sát Playwright tự động thao tác |
-| **7** | Chạy test lần nữa nhưng bỏ `--headed` để chạy headless | So sánh tốc độ |
-| **8** | Mở HTML Report sau khi chạy, xem kết quả của test vừa viết | |
-
----
-
-### ✅ Acceptance Criteria — Bài thực hành hoàn thành khi:
-
-| # | Tiêu chí | Cách kiểm tra |
-|---|---|---|
-| **1** | File `login-test.spec.ts` tồn tại trong thư mục `tests/` | Mở file explorer kiểm tra |
-| **2** | Chạy `npx playwright test login-test.spec.ts` không bị lỗi syntax | Terminal không báo lỗi đỏ |
-| **3** | Test PASS (hoặc nếu FAIL, bạn biết lý do và có thể sửa) | Xem report — test có dấu ✔ xanh |
-| **4** | Bạn đã xem được HTML Report thành công trên browser | Mở được file `index.html` trong `playwright-report/` |
-
-**📌 Bonus (nếu xong sớm):** Chạy thử với `--headed` và quay video màn hình để xem Playwright tự động điền form như thế nào (so với manual bạn từng làm).
-
----
-
-## PHẦN 4 — INTERVIEW Q&A
-
-### Câu hỏi 1: Khi nào nên dùng `test.describe` thay vì viết các `test()` riêng lẻ?
-
-**💡 Gợi ý trả lời tham khảo (dành cho Mentor):**
-
-- `test.describe` dùng để nhóm các test case có chung setup/context (cùng 1 flow, cùng 1 feature, ví dụ: tất cả test về Đăng nhập).
-- Lợi ích: code rõ ràng hơn, có thể dùng `test.beforeEach` để chạy setup chung cho cả nhóm (giảm duplicate code), báo cáo hiển thị nhóm rõ ràng hơn.
-- Không bắt buộc phải dùng, nhưng là best practice khi project có nhiều test.
-
----
-
-### Câu hỏi 2: Nếu bạn chạy `npx playwright test` và thấy nhiều test fail chỉ vì test chạy quá nhanh trước khi element load, bạn làm gì để fix?
-
-**💡 Gợi ý trả lời tham khảo (dành cho Mentor):**
-
-- Đây là vấn đề về timing/await, phổ biến với người mới từ manual (manual họ tự đợi bằng mắt, còn tool chạy nhanh hơn họ đọc).
-- Cách fix: dùng `await page.waitForSelector()` hoặc `await expect(locator).toBeVisible()` — Playwright tự động wait lên tới timeout đã cấu hình (mặc định 30s).
-- Không dùng `page.waitForTimeout(5000)` vì đó là hard-coded wait (dễ fail nếu mạng chậm, hoặc chạy chậm không cần thiết nếu mạng nhanh).
-
----
-
-### Câu hỏi 3: Khi nào bạn chạy test với `--headed`, khi nào chạy `headless`? Lợi ích và hạn chế của từng chế độ?
-
-**💡 Gợi ý trả lời tham khảo (dành cho Mentor):**
-
-- `Headless` (mặc định): nhanh hơn, tốn ít resource hơn, phù hợp chạy trên CI/CD (Jenkins, GitHub Actions) vì không cần hiển thị giao diện.
-- `--headed` (hiện browser): hữu ích khi debug, xem test đang làm gì, check UI thực tế, giống manual testing hơn.
-- Quy tắc: dev/debug dùng headed, chạy hàng loạt / trên server dùng headless.
-
----
-
-### Câu hỏi 4: Làm thế nào để đọc và phân tích HTML Report để tìm nguyên nhân test fail?
-
-**💡 Gợi ý trả lời tham khảo (dành cho Mentor):**
-
-- Mở HTML Report trên browser, test fail có màu đỏ → click vào để xem chi tiết.
-- Thông tin hữu ích:
-  - **Error message:** dòng đỏ in đậm — cho biết lỗi gì (ví dụ: element not found).
-  - **Screenshot:** ảnh chụp tại thời điểm fail (nếu cấu hình).
-  - **Trace:** click vào "View trace" → xem từng step Playwright đã làm, hover vào element nào, input gì, status code của API (nếu có).
-- So với manual: thay vì chỉ có "PASS/FAIL" trong Excel, bạn có trace + screenshot để debug nhanh gấp nhiều lần.
-
----
+**Câu 6:** "Làm thế nào để đọc HTML Report tìm nguyên nhân test fail?"
+→ Mở report, test fail màu đỏ → click vào. Có error message, screenshot tại thời điểm fail, trace xem từng step Playwright đã làm.

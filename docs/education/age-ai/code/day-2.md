@@ -90,6 +90,117 @@ Người mới code thường đặt tên biến linh tinh như `a`, `b`, `data`
 
 > **🔗 Liên hệ với Manual Testing:** Khi bạn viết test case, bạn đặt tên cho từng bước rõ ràng: "Bước 1: Nhập username", "Bước 2: Nhập password". Tên biến cũng vậy — nó giúp người đọc hiểu ngay biến đó dùng để làm gì mà không cần đọc hết code.
 
+---
+
+### 1.4. `null` vs `undefined` — "Không có gì" nhưng khác nhau
+
+Cả `null` và `undefined` đều có nghĩa "không có giá trị", nhưng khác nhau về **nguồn gốc**:
+
+```typescript
+// undefined — biến được khai báo nhưng chưa gán giá trị
+let user;
+console.log(user);  // in ra: undefined (JS tự đặt)
+
+// null — chủ động gán "không có gì"
+const selectedUser = null;  // do lập trình viên cố tình gán
+```
+
+| | `undefined` | `null` |
+|:---|:---|:---|
+| **Ai đặt?** | JavaScript tự động | Lập trình viên gán |
+| **Ý nghĩa** | "Chưa có giá trị" | "Cố tình để trống" |
+| **Kiểu dữ liệu** | `undefined` | `object` (lỗi thiết kế lịch sử của JS) |
+
+> **Trong test:** Khi bạn dùng `?.` (Day 5), nó trả về `undefined` nếu element không tồn tại — giúp code không bị crash.
+
+---
+
+### 1.5. Toán tử so sánh — Kiểm tra giá trị
+
+Dùng để so sánh 2 giá trị, trả về `true` hoặc `false`. Rất quan trọng cho assertion sau này.
+
+```typescript
+const a = 5;
+const b = '5';
+
+// ❌ == và != — so sánh "xuề xòa", không quan tâm kiểu dữ liệu
+console.log(a == b);   // true — coi 5 = '5' dù khác kiểu (number vs string)
+
+// ✅ === và !== — so sánh NGHIÊM NGẶT, phải cùng kiểu và cùng giá trị
+console.log(a === b);  // false — khác kiểu (number vs string)
+console.log(a !== b);  // true
+
+// Các toán tử khác
+console.log(a > 3);    // true
+console.log(a >= 5);   // true
+console.log(a < 10);   // true
+```
+
+> **Quy tắc vàng:** Luôn dùng `===` (3 dấu) và `!==`. Không dùng `==`/`!=` (2 dấu) — dễ gây bug khó tìm.
+
+---
+
+### 1.6. Boolean logic — Kết hợp nhiều điều kiện
+
+Dùng `&&` (AND), `||` (OR), `!` (NOT) để kết hợp các điều kiện:
+
+```typescript
+const isAdmin = true;
+const isLoggedIn = true;
+
+// && — cả hai đều đúng mới true
+console.log(isAdmin && isLoggedIn);  // true
+
+// || — chỉ cần một đúng là true
+console.log(isAdmin || isLoggedIn);  // true
+
+// ! — phủ định
+console.log(!isAdmin);  // false
+```
+
+> **Trong test:** "Nếu user vừa là admin vừa đã đăng nhập thì mới được duyệt đơn" → `if (isAdmin && isLoggedIn) { ... }`
+
+---
+
+### 1.7. String methods — Xử lý text trong test
+
+Các method hữu ích khi kiểm tra text trên trang:
+
+```typescript
+const productName = '  Grey Jacket  ';
+
+// includes — kiểm tra "có chứa chuỗi con không?"
+console.log(productName.includes('Jacket'));   // true
+
+// toLowerCase / toUpperCase — chuyển hoa/thường (so sánh không phân biệt hoa/thường)
+console.log(productName.toLowerCase());         // "  grey jacket  "
+
+// trim — bỏ khoảng trắng thừa đầu và cuối
+console.log(productName.trim());               // "Grey Jacket"
+```
+
+> **Trong test:** Khi assert tên sản phẩm, dùng `.toLowerCase()` để tránh fail vì viết hoa/không viết hoa.
+
+---
+
+### 1.8. Spread operator `...` — Copy và merge object
+
+Dùng `...` để sao chép hoặc gộp object — tạo biến thể test data từ 1 object gốc:
+
+```typescript
+// Sao chép object — tạo bản sao, không ảnh hưởng object gốc
+const defaultUser = { role: 'VIEWER', active: true };
+const adminUser = { ...defaultUser, role: 'ADMIN' };
+// Kết quả: { role: 'ADMIN', active: true }
+
+// Dùng trong test — tạo nhiều biến thể từ 1 base
+const baseProduct = { name: 'Grey Jacket', price: 55, slug: 'grey-jacket' };
+const saleProduct = { ...baseProduct, price: 40 };   // chỉ đổi giá
+const vipProduct = { ...baseProduct, price: 100, vip: true };  // thêm field mới
+```
+
+> **Lợi ích:** Không cần viết lại toàn bộ object cho mỗi biến thể — chỉ ghi đè field khác.
+
 
 ## PHẦN 2 — CODE EXAMPLE
 
@@ -197,54 +308,45 @@ const loginMessage = `🔐 Đang đăng nhập với user ${testUser.username} (
 | **Khả năng mở rộng** | Thêm thông tin → thêm biến mới | Thêm thuộc tính vào object là đủ |
 | **Độ an toàn** | Dễ ghép sai dấu cách, dễ sai cú pháp | Template literal ít lỗi hơn |
 
+---
+
+### 2.3. Ví dụ về null/undefined, so sánh, boolean, string methods, spread
+
+```typescript
+// ✅ null vs undefined
+let user;                    // undefined — chưa gán
+const admin = null;          // null — cố tình để trống
+console.log(typeof user);    // "undefined"
+console.log(typeof admin);   // "object" (đặc thù của JS)
+
+// ✅ Toán tử so sánh — dùng ===
+const price = 55;
+console.log(price === 55);   // true
+console.log(price === '55'); // false (khác kiểu)
+console.log(price > 50);     // true
+
+// ✅ Boolean logic
+const isAdmin = true;
+const isLoggedIn = true;
+if (isAdmin && isLoggedIn) {
+  console.log('Được duyệt đơn');
+}
+
+// ✅ String methods — xử lý text
+const name = '  GREY JACKET  ';
+console.log(name.trim().toLowerCase());              // "grey jacket"
+console.log(name.includes('JACKET'));                // true
+
+// ✅ Spread operator — copy object
+const defaultConfig = { timeout: 30000, retries: 2 };
+const fastConfig = { ...defaultConfig, timeout: 5000 };
+console.log(fastConfig);  // { timeout: 5000, retries: 2 }
+```
+
 
 ## PHẦN 3 — BÀI THỰC HÀNH TRÊN PROJECT THỰC
 
-### 🎯 Bài thực hành: Xây dựng Test Data cho flow đơn hàng B2B
-
-**Bối cảnh:** App quản lý đơn hàng B2B của bạn có 3 loại user chính:
-- **Admin:** Có thể duyệt hoặc từ chối đơn hàng
-- **Editor (nhân viên bán hàng):** Có thể tạo đơn hàng mới
-- **Viewer:** Chỉ có thể xem, không được thao tác
-
-Ngày hôm nay bạn sẽ viết code để **tổ chức dữ liệu test** cho 3 loại user này, chuẩn bị cho việc viết test ở các ngày sau.
-
-**📝 Checklist các bước cần làm:**
-
-- [ ] **Bước 1:** Mở file `day1-variables.ts` đã tạo hôm qua, tạo một file mới `day2-test-data.ts` để thực hành hôm nay
-
-- [ ] **Bước 2:** Khai báo một hằng số `const BASE_URL` chứa URL của app (dùng UPPER_SNAKE_CASE)
-
-- [ ] **Bước 3:** Tạo một **object** tên `adminUser` chứa các thông tin:
-    - `username`: tên đăng nhập của admin (trên project thực)
-    - `password`: mật khẩu của admin
-    - `role`: `"ADMIN"`
-    - `fullName`: tên hiển thị
-
-- [ ] **Bước 4:** Tạo tương tự `editorUser` và `viewerUser` với thông tin thực tế (nếu chưa có user thật, hãy đặt giá trị mẫu theo ý định test)
-
-- [ ] **Bước 5:** Dùng template literal để tạo một biến `adminLoginMessage` với nội dung:
-    > `"🧪 Test data: Admin ${fullName} (${role}) sẽ login tại ${BASE_URL}"`
-
-- [ ] **Bước 6:** Dùng `console.log()` in ra tất cả thông tin của 3 user để kiểm tra
-
----
-
-### 🤔 Câu hỏi gợi mở — Phân tích TRƯỚC KHI code:
-
-> *"Trong project B2B của bạn, hãy xác định: Những role user nào cần được test cho flow tạo đơn hàng? Admin có quyền gì mà Editor không có? Nếu bạn có 10 user khác nhau, bạn sẽ quản lý dữ liệu của họ như thế nào để dễ dàng thay đổi khi cần? Việc dùng object để nhóm thông tin giúp ích gì so với việc khai báo từng biến riêng lẻ?"*
-
-Hãy trả lời câu hỏi này **bằng ngôn ngữ của bạn**, không cần code — đây là bước để bạn hiểu **vấn đề thực tế** trước khi viết code giải quyết nó.
-
----
-
-### ✅ Acceptance Criteria — Bài thực hành hoàn thành khi:
-
-1. File `day2-test-data.ts` được tạo và chứa ít nhất 3 object user (admin, editor, viewer) với đầy đủ thuộc tính
-2. Các object dùng `const` vì dữ liệu test không thay đổi trong suốt quá trình chạy test
-3. `console.log()` in ra được nội dung của ít nhất 1 user với template literal đúng cú pháp
-4. Code chạy không có lỗi TypeScript (có thể dùng `ts-node` hoặc compile sang JS rồi chạy)
-
+Phần này sẽ được đưa ra vào thực hành project.
 
 ## PHẨN 4 — INTERVIEW Q&A
 
@@ -300,6 +402,62 @@ Học viên nên trả lời được các ý:
 - Việc dùng mảng giúp dễ dàng loop (sẽ học sau) để chạy test cho từng user
 - Cách này giúp tách biệt dữ liệu test khỏi code, giống như file Excel riêng trong manual testing
 - Khi thêm user mới, chỉ cần thêm 1 object vào mảng, không cần sửa logic test
+</details>
+
+---
+
+### Câu 5: "`null` và `undefined` khác nhau thế nào? Khi nào gặp từng loại trong test automation?"
+
+<details>
+<summary><strong>💡 Gợi ý câu trả lời (cho Mentor tham khảo)</strong></summary>
+
+Học viên nên trả lời được các ý:
+- `undefined`: JavaScript tự đặt khi biến chưa được gán hoặc property không tồn tại
+- `null`: lập trình viên chủ động gán để biểu thị "không có giá trị"
+- Trong Playwright: `.textContent()` trả về `null` nếu element không có text, còn truy cập property không tồn tại của object trả về `undefined`
+- Dùng `??` để xử lý cả hai trường hợp (sẽ học ở Day 5)
+</details>
+
+---
+
+### Câu 6: "Tại sao luôn dùng `===` thay vì `==` trong JavaScript?"
+
+<details>
+<summary><strong>💡 Gợi ý câu trả lời (cho Mentor tham khảo)</strong></summary>
+
+Học viên nên trả lời được các ý:
+- `==` so sánh "xuề xòa" — tự động chuyển đổi kiểu dữ liệu (type coercion), dễ gây bug
+- `===` so sánh "nghiêm ngặt" — phải cùng kiểu và cùng giá trị mới true
+- Ví dụ: `0 == false` → true (bug), `0 === false` → false (đúng)
+- Trong test: luôn dùng `===` vì assertion cần chính xác
+</details>
+
+---
+
+### Câu 7: "Khi nào dùng `&&`, khi nào dùng `||` trong logic test? Cho ví dụ cụ thể."
+
+<details>
+<summary><strong>💡 Gợi ý câu trả lời (cho Mentor tham khảo)</strong></summary>
+
+Học viên nên trả lời được các ý:
+- `&&` (AND): cả hai điều kiện đều đúng → dùng khi "cần tất cả đều thỏa"
+- `||` (OR): chỉ cần một điều kiện đúng → dùng khi "chỉ cần một cái thỏa"
+- Ví dụ: "Chỉ duyệt đơn nếu user là admin VÀ đã đăng nhập" → `isAdmin && isLoggedIn`
+- Ví dụ: "Hiển thị lỗi nếu email trống HOẶC password trống" → `!email || !password`
+</details>
+
+---
+
+### Câu 8: "Spread operator `...` dùng để làm gì? Lợi ích khi quản lý test data?"
+
+<details>
+<summary><strong>💡 Gợi ý câu trả lời (cho Mentor tham khảo)</strong></summary>
+
+Học viên nên trả lời được các ý:
+- `...` dùng để copy toàn bộ thuộc tính của object/array vào object/array mới
+- Lợi ích: tạo biến thể test data từ 1 object gốc mà không sửa object gốc
+- Ví dụ: base product có giá £55, tạo sale product với `{ ...baseProduct, price: 40 }`
+- Dễ bảo trì: khi thêm field mới vào base, tất cả biến thể tự động có field đó
 </details>
 
 ---

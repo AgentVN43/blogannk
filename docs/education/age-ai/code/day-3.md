@@ -4,92 +4,148 @@ slug: /education/age-ai/code/day-3
 id: age-ai-code-day-3
 title: Day 3
 ---
+
 ### PHẦN 1 — LÝ THUYẾT
 
-**1. Function (Hàm) là gì?**
-Hãy tưởng tượng khi làm manual testing, bạn có một bước "Đăng nhập" lặp đi lặp lại ở 10 test case khác nhau. Thay vì viết lại 10 lần các thao tác click username, nhập password, click nút login, bạn sẽ gộp nó thành một "Test Case con" và gọi tên nó ra để dùng. Trong code, **Function** chính là "Test Case con" đó: một khối lệnh được đặt tên, đóng gói lại để tái sử dụng bất kỳ lúc nào.
+**1. `const` vs `let` — Khai báo biến**
 
-**2. Vấn đề Regular function vs Arrow function giải quyết gì?**
-JavaScript có 2 cách viết function chính: Regular (cũ) và Arrow (mới). 
-Khi bạn viết automation, bạn sẽ cần truyền rất nhiều hành động vào từng bước (ví dụ: "đợi 2 giây rồi mới click"). Cách viết Regular đôi khi gây ra lỗi "mất ngữ cảnh" (nhầm lẫn trang đang thao tác) vì nó tạo ra một không gian riêng. Arrow function ra đời để viết ngắn gọn hơn (tiết kiệm thời gian gõ code) và tự động giữ nguyên "ngữ cảnh" của nơi nó được tạo ra - điều cực kỳ quan trọng để Playwright không bị nhầm lẫn giữa các tab hay các trang web với nhau.
+JavaScript/TypeScript có 3 từ khóa. QC chỉ nhớ 2:
 
-**3. `npm init playwright@latest` giải quyết vấn đề gì?**
-Day xưa, cài đặt công cụ test thủ công rất mệt: phải tải browser driver, tạo folder, tạo file config, cài thư viện... Lệnh này giống như một nút "Cài đặt tự động 1 chạm". Nó hỏi bạn vài câu hỏi (dùng ngôn ngữ gì? chạy trên browser nào?) và tự động setup 100% môi trường Playwright hoàn chỉnh để bạn bắt đầu viết test ngay.
+- **`const`** — dùng cho mọi thứ. URL, selector, object, array đều `const`. Giá trị không gán lại được.
+- **`let`** — chỉ khi cần gán lại (đếm retry, flag trong vòng lặp).
+- **`var`** — ❌ không dùng (function scope cũ, gây bug).
+
+> **Quy tắc vàng:** Luôn `const`. Nếu TypeScript báo lỗi `Cannot assign to 'x' because it is a constant`, đổi sang `let`.
+
+**2. Function (Hàm) là gì?**
+
+Hãy tưởng tượng khi làm manual testing, bạn có bước "Đăng nhập" lặp lại ở 10 test case. Thay vì viết 10 lần, bạn gộp thành "Test Case con" và gọi tên. Trong code, **Function** chính là "Test Case con" đó: khối lệnh được đặt tên, đóng gói để tái sử dụng.
+
+**3. Arrow Function**
+
+**3.1 Vấn đề Regular vs Arrow giải quyết gì?**
+JavaScript có 2 cách viết function: Regular (`function`) và Arrow (`=>`).
+Regular đôi khi gây lỗi "mất ngữ cảnh" (`this`) vì tạo không gian riêng. Arrow function ngắn gọn hơn và tự giữ nguyên ngữ cảnh — cực kỳ quan trọng để Playwright không nhầm lẫn giữa các tab hay trang.
+
+**3.2 Các biến thể cú pháp Arrow function cần biết:**
+
+| Cách viết | Cú pháp | Ví dụ trong test |
+|:---|:---|:---|
+| **0 tham số** | `() => biểu_thức` | `const getUrl = () => page.url();` |
+| **1 tham số** | `x => biểu_thức` (bỏ ngoặc được) | `const getName = user => user.name;` |
+| **Nhiều tham số** | `(x, y) => biểu_thức` | `const sum = (a, b) => a + b;` |
+| **Nhiều dòng lệnh** | `() => { lệnh1; return kq; }` | Phải có `return` tường minh |
+| **Trả về object** | `() => ({ key: value })` | Bọc `()` để không nhầm với `{}` |
+
+> **Mẹo:** Chỉ **1 tham số** mới bỏ ngoặc `()`. Chỉ **1 dòng biểu thức** mới bỏ `return` và `{}`.
+
+**3.3 So sánh Regular vs Arrow — Chi tiết:**
+
+| Tính năng | Regular | Arrow |
+|:---|:---|:---|
+| Cú pháp | `function name() {}` | `const name = () => {}` |
+| `this` | Tạo ngữ cảnh riêng | Kế thừa từ nơi khai báo |
+| `arguments` | Có sẵn | **Không** — dùng `...rest` |
+| Dùng `new` (constructor) | Được | **Lỗi** |
+| Hoisting | Được | **Không** |
+| Implicit return | Không | Có (nếu body là 1 biểu thức) |
+
+**3.4 Khi nào KHÔNG dùng Arrow function?**
+- **Làm constructor:** `new myFunc()` → lỗi TypeError
+- **Object method cần `this` động:** `obj.greet = () => {...}` — `this` không trỏ vào `obj`
+- **Cần `arguments`:** Arrow không có, phải dùng rest `(...params) => {}`
+- **Generator function:** `function*` không viết arrow được
+
+**4. Template Literal — Ghép chuỗi thông minh**
+
+Dùng backtick `` ` `` và `${variable}` để nhúng biến, thay vì dùng `+`.
+
+```typescript
+// ❌ Cũ: dùng dấu +
+const url = 'https://b2b-app.com' + '/products/' + slug;
+
+// ✅ Mới: template literal
+const url = `https://b2b-app.com/products/${slug}`;
+```
+
+Template literal đặc biệt hữu ích khi đặt tên test động (data-driven) và xây URL từ biến.
+
+> **Lưu ý:** Phím backtick `` ` `` nằm góc trên bên trái (cạnh Esc), khác phím nháy đơn `'`.
 
 **Điểm chính cần nhớ:**
-*   **Function** giúp không bị lặp code (giống nguyên tắc không viết trùng lặp Test Case trong manual).
-*   **Regular function** dùng từ khóa `function`, **Arrow function** dùng dấu `=>`.
-*   Trong Playwright + TypeScript, luôn ưu tiên dùng **Arrow function** để code gọn và an toàn ngữ cảnh.
-*   Lệnh `npm init playwright@latest` tạo sẵn cấu trúc folder, file config và tải sẵn trình duyệt ẩn (browser binary).
+- `const` cho biến cố định, `let` khi cần gán lại — tránh `var`.
+- **Function** giúp không lặp code.
+- Arrow function: **5 dạng cú pháp**, **không** `arguments`, **không** `new`, **không** hoisting.
+- **Template literal** dùng `` `${}` `` để ghép chuỗi + biến.
 
 ---
 
 ### PHẦN 2 — CODE EXAMPLE
 
 ```typescript
-// ❌ SAI: Dùng Regular function cồng kềnh và dễ gây lỗi ngữ cảnh (this) khi viết Playwright Test
+// ✅ const — hầu hết mọi thứ
+const BASE_URL = 'https://b2b-app.com';
+const ORDER_FLOW = {
+  spinner: '.loading-spinner',
+  submitBtn: 'button[type="submit"]',
+};
+let retryCount = 0;    // chỉ let khi cần gán lại
+retryCount++;
+```
+
+```typescript
+// ❌ Regular function — cồng kềnh
 function clickSubmitButton() {
   return page.locator('button[type="submit"]').click();
 }
 
-function handlePopup() {
-  return page.locator('.popup-confirm').click();
-}
-
-// Gọi hàm ra dùng
-clickSubmitButton();
-handlePopup();
+// ✅ Arrow function — gọn, an toàn ngữ cảnh
+const clickSubmitButton = () => page.locator('button[type="submit"]').click();
 ```
 
 ```typescript
-// ✅ ĐÚNG: Dùng Arrow function gọn gàng, chuẩn convention của Playwright hiện đại
-const clickSubmitButton = () => page.locator('button[type="submit"]').click();
-
-const handlePopup = () => page.locator('.popup-confirm').click();
-
-// Gọi hàm ra dùng y hệt
-clickSubmitButton();
-handlePopup();
+// ✅ 5 dạng Arrow function trong Playwright
+const getUrl = () => page.url();                                    // 0 tham số
+const getText = el => el.textContent;                               // 1 tham số (bỏ ngoặc)
+const fillLogin = async (page, user, pass) => {                     // nhiều tham số
+  await page.fill('#username', user);
+  await page.fill('#password', pass);
+};
+const buildOrder = (name, qty) => ({ name, qty, status: 'pending' }); // trả về object
 ```
 
-| Vì sao cách ĐÚNG tốt hơn cách SAI |
-| :--- |
-| **Ngắn gọn:** Bỏ được từ khóa `function` và từ khóa `return` (với 1 dòng lệnh, arrow function tự động return kết quả). |
-| **An toàn:** Arrow function không tạo ra ngữ cảnh `this` riêng, giúp tránh bug khó hiểu khi truyền hàm vào các hàm xử lý event của Playwright. |
+```typescript
+// ✅ Template literal với test case
+const slug = 'grey-jacket';
+test(`URL động cho ${slug}`, async ({ page }) => {
+  await page.goto(`${BASE_URL}/products/${slug}`);
+});
+```
 
 ---
 
-### PHẦN 3 — BÀI THỰC HÀNH TRÊN PROJECT THỰC 
+### PHẦN 3 — BÀI THỰC HÀNH
 
-**Bối cảnh:** App quản lý đơn hàng B2B của bạn (React). Khi bấm "Tạo đơn hàng", app sẽ hiện **loading spinner** (gọi API) rồi hiện **popup confirm** trước khi submit thật.
-
-**Checklist thực hành:**
-1. Mở terminal tại folder project, chạy lệnh `npm init playwright@latest` để cài đặt môi trường (chọn TypeScript, chọn Chromium).
-2. Mở file test mẫu mà Playwright vừa tạo ra, xóa code demo cũ đi.
-3. Viết 1 arrow function tên là `waitForApiLoading`: dùng để đợi element loading spinner biến mất.
-4. Viết 1 arrow function tên là `acceptOrderPopup`: dùng để đợi popup confirm hiện ra và click nút đồng ý.
-5. Viết 1 test case chính (dùng `test` của Playwright), gọi lần lượt 2 hàm trên theo đúng thứ tự logic của flow "Tạo đơn hàng".
-
-**Câu hỏi gợi mở (Phân tích trước khi code):**
-> *"Trước khi viết, hãy quan sát: Loading spinner và Popup confirm này có xuất hiện ngay lập tức (đồng bộ) hay có độ trễ (bất đồng bộ) khi gọi API? Nếu API chạy nhanh quá không kịp hiện spinner, hàm đợi spinner của bạn viết như thế nào để script không bị bị lỗi timeout?"*
-
-**Acceptance Criteria (Hoàn thành khi):**
-1. Chạy lệnh `npx playwright test` và script không báo lỗi cú pháp TypeScript (không có dòng đỏ trong VS Code).
-2. 2 hàm `waitForApiLoading` và `acceptOrderPopup` bắt buộc phải được viết bằng cú pháp Arrow function.
-3. Test case chính không chứa trực tiếp code click popup hay đợi spinner, mà phải gọi lại qua tên 2 hàm trên.
+Phần này sẽ được đưa ra vào thực hành project.
 
 ---
 
-### PHẦN 4 — INTERVIEW Q&A 
+### PHẦN 4 — INTERVIEW Q&A
 
-**Câu hỏi 1:** "Trong dự án Playwright, team bạn quy định dùng Arrow function cho mọi helper function. Tại sao lại tránh dùng Regular function, đặc biệt là khi viết các custom commands hoặc config?"
-*   *Gợi ý cho mentor:* Học viên cần nhắc đến việc Arrow function không bind `this` riêng, trong khi Regular function tạo ra `this` của chính nó. Khi truyền hàm vào Playwright fixtures hoặc config, dùng Regular function dễ làm mất tham chiếu `this` của Playwright test context.
+**Câu 1:** "Tại sao team quy định dùng Arrow function cho helper Playwright thay vì Regular?"
+→ Arrow không bind `this` riêng. Regular tạo `this` riêng — dễ mất context khi truyền vào fixtures/config.
 
-**Câu hỏi 2:** "So sánh hai cách cài đặt: chạy `npm init playwright@latest` so với cài riêng lẻ từng gói (`npm i playwright`, `npm i -D @playwright/test`). Khi nào bạn sẽ chọn cách thủ công?"
-*   *Gợi ý cho mentor:* Học viên phân tích được `npm init playwright@latest` là cách chuẩn cho project mới (tạo cấu trúc, playwright.config.ts, tải browser). Cài riêng lẻ chỉ dùng khi muốn nhét Playwright vào một project có sẵn lâu năm mà không muốn thay đổi cấu trúc folder hiện tại.
+**Câu 2:** "`const` vs `let` khác nhau thế nào? Khi nào dùng cái nào?"
+→ `const`: không gán lại được, dùng cho hầu hết mọi thứ. `let`: gán lại được. Chỉ `let` khi thực sự cần thay đổi giá trị.
 
-**Câu hỏi 3:** "Bạn viết một arrow function để xử lý việc đợi loading spinner, nhưng hôm sau app đổi tên class của spinner. Làm thế nào để refactor hàm của bạn cho dễ maintain mà không cần sửa ở mọi nơi đã gọi hàm đó?"
-*   *Gợi ý cho mentor:* Điểm mấu chốt là nguyên tắc DRY (Don't Repeat Yourself). Học viên cần giải thích vì đã đóng gói thành 1 arrow function duy nhất, nên khi selector thay đổi, họ chỉ cần sửa 1 lần ở nơi định nghĩa hàm, toàn bộ các test case gọi đến hàm đó sẽ tự động cập nhật.
+**Câu 3:** "App đổi tên class của spinner. Refactor thế nào nếu đã dùng arrow function?"
+→ Vì đã đóng gói thành 1 arrow function duy nhất → chỉ sửa 1 lần ở nơi định nghĩa (DRY).
 
-**Câu hỏi 4:** "Arrow function có hỗ trợ cơ chế 'Hoisting' như Regular function không? Nếu bạn gọi một hàm trước khi nó được khai báo trong file test, điều gì sẽ xảy ra?"
-*   *Gợi ý cho mentor:* Học viên nhận diện được Regular function được hoisting (có thể gọi trước khi khai báo trong code), còn Arrow function thì không. Gọi Arrow function trước khi khai báo sẽ gặp lỗi `ReferenceError` (biến chưa được khởi tạo).
+**Câu 4:** "Arrow function có hoisting không?"
+→ Regular: được (gọi trước khi khai báo). Arrow: không → `ReferenceError`.
+
+**Câu 5:** "Arrow function không có `arguments`. Khi cần lấy tất cả tham số, làm thế nào?"
+→ Dùng rest parameter `(...params) => {}`. Biến `params` chứa tất cả đối số.
+
+**Câu 6:** "Template literal dùng dấu gì? Lợi ích so với dùng `+`?"
+→ Backtick `` ` ``. Nhúng biến `${var}` trực tiếp, code ngắn hơn, dễ đọc.
